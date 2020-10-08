@@ -5,7 +5,7 @@ author        = "mdrokz"
 description   = "an chess engine"
 license       = "MIT"
 srcDir        = "src"
-bin           = @["Nim"]
+bin           = @["main"]
 
 
 

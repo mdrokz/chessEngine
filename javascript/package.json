@@ -1,0 +1,17 @@
+{
+  "name": "chess-engine",
+  "version": "1.0.0",
+  "description": "an chess engine",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "repository": {
+    "url": "https://github.com/mdrokz/chessEngine"
+  },
+  "author": "mdrokz",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^5.3.1"
+  }
+}
