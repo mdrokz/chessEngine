@@ -2,3 +2,5 @@ main
 node_modules
 
 geckodriver.log
+credentials.txt
+url.txt

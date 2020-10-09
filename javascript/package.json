@@ -4,7 +4,7 @@
   "description": "an chess engine",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "node src/main.js"
   },
   "repository": {
     "url": "https://github.com/mdrokz/chessEngine"
