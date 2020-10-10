@@ -1,8 +1,9 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const readline = require('readline');
+const getFenString = require('./chessFenScript');
 
-const rl = readline.createInterface(fs.createReadStream('../credentials.txt'));
+const rl = readline.createInterface(fs.createReadStream('./credentials.txt'));
 
 var credentials = [];
 
@@ -13,8 +14,8 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 (async () => {
 
     console.log('Scraper Started...');
-
-    const url = fs.readFileSync('../url.txt').toString();
+    var x = fs.readdirSync('./');
+    const url = fs.readFileSync('./url.txt').toString();
 
     rl.on('line', (input) => {
         credentials.push(input);
@@ -31,11 +32,15 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
     const page = await browser.newPage();
 
     await page.exposeFunction("extractMoves", (whiteMoves, blackMoves) => {
-
         console.log("WHITE MOVES", whiteMoves);
         console.log("BLACK MOVES", blackMoves);
+    });
 
-    })
+    await page.exposeFunction("getFenString", (list) => {
+
+
+        getFenString(list);
+    });
 
     await page.goto(chessLoginUrl);
 
@@ -61,7 +66,7 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
         waitUntil: ['domcontentloaded']
     })
 
-    await page.goto(url);
+    page.goto(url);
 
     await page.waitForNavigation({
         waitUntil: ['domcontentloaded']
@@ -69,8 +74,13 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
     await Wait(1000);
 
-    await page.evaluate(() => {
+    // page.on('console', msg => {
+    //     console.log('PAGE LOG:', ...msg.args)
+    // });
 
+
+    await page.evaluate(() => {
+        debugger;
         var whiteMoves = [];
         var blackMoves = [];
 
@@ -93,6 +103,16 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
         window.extractMoves(whiteMoves, blackMoves);
 
+        // -----------------------------------------------------------------------------------------------------------------------------
+
+        var squares = document.getElementsByClassName('board')[0].querySelectorAll('.piece');
+        console.log(squares);
+        var list = [];
+        squares.forEach(f => {
+            // console.log(f.className);
+            list.push(f.className);
+        });
+        window.getFenString(list);
     });
 
 })();
