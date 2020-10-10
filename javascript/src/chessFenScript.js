@@ -15,24 +15,25 @@
 
 // $("body").append("<button class='button-submit' onclick='go_analyze();' style='position:fixed; left: 200px; top:5px; font-size:10px; z-index: 9;'>Computer Analysis</button>");
 
-// var list = ['piece wr square-11',
-//     'piece wk square-71',
-//     'piece wr square-62',
-//     'piece wp square-13',
-//     'piece wp square-33',
-//     'piece bq square-53',
-//     'piece wn square-63',
-//     'piece bn square-73',
-//     'piece bp square-83',
-//     'piece wp square-24',
-//     'piece wb square-54',
-//     'piece bk square-85',
-//     'piece bp square-26',
-//     'piece bp square-46',
-//     'piece wq square-76',
-//     'piece bp square-17',
-//     'piece bp square-37'
-// ];
+var list = [
+    "piece wr square-11",
+    "piece wk square-71",
+    "piece wr square-62",
+    "piece wp square-13",
+    "piece wp square-33",
+    "piece bq square-53",
+    "piece wn square-63",
+    "piece bn square-73",
+    "piece bp square-83",
+    "piece wp square-24",
+    "piece wb square-54",
+    "piece bk square-85",
+    "piece bp square-26",
+    "piece bp square-46",
+    "piece wq square-76",
+    "piece bp square-17",
+    "piece bp square-37"
+];
 
 var chessBoard = new Array(8);
 
@@ -40,7 +41,7 @@ for (var i = 1; i <= 8; i++) {
     chessBoard[i] = new Array(8);
 }
 
-// getFenString(list);
+getFenString(list);
 
 function getFenString(list) {
     list.forEach(f => {
@@ -61,19 +62,19 @@ function getFenString(list) {
             var piece = p[0].trim();
         }
 
-        chessBoard[sqNum[0]][sqNum[1]] = piece;
+        chessBoard[sqNum[1]][sqNum[0]] = piece;
     })
 
     var strFen = '';
 
-    for (var i = 1; i <= 8; i++) {
+    for (var i = 8; i >= 1; i--) {
         for (var j = 1; j <= 8; j++) {
             var p = getPieceInitals(chessBoard[i][j]);
             if (p) {
                 strFen += p;
             }
         }
-        if (i < 8) {
+        if (i > 1) {
             strFen += '/';
         }
     }

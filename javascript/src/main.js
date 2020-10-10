@@ -106,12 +106,13 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
         // -----------------------------------------------------------------------------------------------------------------------------
 
         var squares = document.getElementsByClassName('board')[0].querySelectorAll('.piece');
-        console.log(squares);
+        // console.log(squares);
         var list = [];
         squares.forEach(f => {
             // console.log(f.className);
             list.push(f.className);
         });
+        console.log(list);
         window.getFenString(list);
     });
 
