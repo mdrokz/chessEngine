@@ -7,9 +7,9 @@ const fs = require('fs');
 const cp = require('child_process')
 
 // FFI
-const ffi = require('ffi');
-const ref = require('ref');
-const refArray = require('ref-array');
+// const ffi = require('ffi');
+// const ref = require('ref');
+// const refArray = require('ref-array');
 
 // modules
 const getFenString = require('./chessFenScript');
