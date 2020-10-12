@@ -17,7 +17,7 @@ const {
     stdin
 } = require('process');
 
-const rl = readline.createInterface(fs.createReadStream('../credentials.txt'));
+const rl = readline.createInterface(fs.createReadStream('./credentials.txt'));
 
 var credentials = [];
 
@@ -26,21 +26,29 @@ const chessLoginUrl = "https://chess.com/login";
 const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
 (async () => {
-    var CArray = refArray('string')
+    // var CArray = refArray('string')
 
-    var main = ffi.Library('../src/libmain', {
-        'getFenString': ['void', [CArray]]
-    })
+    // var main = ffi.Library('../src/libmain', {
+    //     'getFenString': ['void', [CArray]]
+    // })
 
     console.log('Scraper Started...');
 
-    const url = fs.readFileSync('../url.txt').toString();
+    const url = fs.readFileSync('./url.txt').toString();
 
     rl.on('line', (input) => {
         credentials.push(input);
     });
 
-    const p = cp.spawn('../stockfish', {
+    let stockfishEngine = "";
+
+    if(process.platform == 'win32') {
+        stockfishEngine = "stockfish_20090216_x64.exe"
+    } else {
+        stockfishEngine = "./stockfish"
+    }
+
+    const p = cp.spawn(stockfishEngine, {
         shell: true,
     });
 
@@ -67,8 +75,9 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
     await page.exposeFunction("extractMoves", (movesPlayed, nextMove, castle, board) => {
         console.log("Moves Played:", movesPlayed, nextMove)
         let fen = getFenString(board);
-        console.log(`position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves`)
-        p.stdin.write(`position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves \n`)
+        let cmd = `position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves \n`
+        console.log(cmd)
+        p.stdin.write(cmd);
         p.stdin.write("go depth 21 \n")
     });
 
@@ -194,7 +203,7 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
         observer.observe(targetNode, config);
     });
 
-    p.stdin.end();
+    // p.stdin.end();
 
 })();
 

@@ -15,20 +15,40 @@
 
 // $("body").append("<button class='button-submit' onclick='go_analyze();' style='position:fixed; left: 200px; top:5px; font-size:10px; z-index: 9;'>Computer Analysis</button>");
 
-var list = ["piece wr square-11", "piece wn square-21", "piece wb square-31", "piece wq square-41", "piece wk square-51", "piece wb square-61", "piece wn square-63", "piece wr square-81", "piece wp square-12", "piece wp square-22", "piece wp square-32", "piece wp square-52", "piece wp square-62", "piece wp square-72", "piece wp square-82", "piece bq square-66", "piece bp square-17", "piece bp square-27", "piece bp square-37", "piece bp square-47", "piece bp square-77", "piece bp square-87", "piece br square-18", "piece bn square-28", "piece bb square-38", "piece bk square-58", "piece bb square-68", "piece bn square-78", "piece br square-88"];
+// var list = ['piece wr square-11',
+//     'piece wk square-71',
+//     'piece wr square-62',
+//     'piece wp square-13',
+//     'piece wp square-33',
+//     'piece bq square-53',
+//     'piece wn square-63',
+//     'piece bn square-73',
+//     'piece bp square-83',
+//     'piece wp square-24',
+//     'piece wb square-54',
+//     'piece bk square-85',
+//     'piece bp square-26',
+//     'piece bp square-46',
+//     'piece wq square-76',
+//     'piece bp square-17',
+//     'piece bp square-37'
+// ];
 
 var chessBoard = null;
 
-getFenString(list);
+// for (var i = 1; i <= 8; i++) {
+//     chessBoard[i] = new Array(8);
+// }
+
+// getFenString(list);
 
 function getFenString(list) {
-
     chessBoard = new Array(8);
 
     for (var i = 1; i <= 8; i++) {
         chessBoard[i] = new Array(8);
     }
-
+    
     list.forEach(f => {
         // var className = 'piece bq square-53';
         var className = f;
