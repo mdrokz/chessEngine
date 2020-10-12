@@ -61,19 +61,20 @@ function getFenString(list) {
             var piece = p[0].trim();
         }
 
-        chessBoard[sqNum[0]][sqNum[1]] = piece;
+        // console.log(sqNum);
+
+        chessBoard[sqNum[1]][sqNum[0]] = piece;
     })
 
     var strFen = '';
-
-    for (var i = 1; i <= 8; i++) {
+    for (var i = 8; i >= 1; i--) {
         for (var j = 1; j <= 8; j++) {
             var p = getPieceInitals(chessBoard[i][j]);
             if (p) {
                 strFen += p;
             }
         }
-        if (i < 8) {
+        if (i > 1) {
             strFen += '/';
         }
     }
@@ -86,10 +87,12 @@ function getFenString(list) {
         var occ = 0;
         for (var i = 0; i < 8; i++) {
             if (f[i] == '1') {
+                // console.log(f)
                 occ += 1;
                 if (occ > 1) {
                     var pos = newFen.length - 1;
                     newFen = replaceAt(newFen, pos, occ);
+                    // console.log(newFen)
                 } else {
                     newFen += f[i];
                 }
@@ -105,7 +108,7 @@ function getFenString(list) {
     var fen = y.join('/');
 
     // console.log(className);
-    console.log(fen);
+    return fen;
 }
 
 
@@ -153,7 +156,6 @@ function replaceAt(str, index, replacement) {
     if (index >= str.length) {
         return str.valueOf();
     }
-
     return str.substring(0, index) + replacement + str.substring(index + 1);
 }
 

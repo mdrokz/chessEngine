@@ -1,9 +1,23 @@
+// Deps
 const puppeteer = require('puppeteer');
-const fs = require('fs');
-const readline = require('readline');
-const getFenString = require('./chessFenScript');
 
-const rl = readline.createInterface(fs.createReadStream('./credentials.txt'));
+// STD
+const readline = require('readline');
+const fs = require('fs');
+const cp = require('child_process')
+
+// FFI
+const ffi = require('ffi');
+const ref = require('ref');
+const refArray = require('ref-array');
+
+// modules
+const getFenString = require('./chessFenScript');
+const {
+    stdin
+} = require('process');
+
+const rl = readline.createInterface(fs.createReadStream('../credentials.txt'));
 
 var credentials = [];
 
@@ -12,14 +26,33 @@ const chessLoginUrl = "https://chess.com/login";
 const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
 (async () => {
+    var CArray = refArray('string')
+
+    var main = ffi.Library('../src/libmain', {
+        'getFenString': ['void', [CArray]]
+    })
 
     console.log('Scraper Started...');
-    var x = fs.readdirSync('./');
-    const url = fs.readFileSync('./url.txt').toString();
+
+    const url = fs.readFileSync('../url.txt').toString();
 
     rl.on('line', (input) => {
         credentials.push(input);
     });
+
+    const p = cp.spawn('../stockfish', {
+        shell: true,
+    });
+
+    p.stdout.on('data', (data) => {
+        let line = data.toString();
+        console.log(data.toString());
+    })
+
+
+    p.stdin.write("uci\n");
+
+    p.stdin.write("ucinewgame\n");
 
     const browser = await puppeteer.launch({
         defaultViewport: {
@@ -31,22 +64,16 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
     const page = await browser.newPage();
 
-    await page.exposeFunction("extractMoves", (whiteMoves, blackMoves) => {
-        console.log("WHITE MOVES", whiteMoves);
-        console.log("BLACK MOVES", blackMoves);
-    });
-
-    await page.exposeFunction("getFenString", (list) => {
-
-
-        getFenString(list);
+    await page.exposeFunction("extractMoves", (movesPlayed, nextMove, castle, board) => {
+        console.log("Moves Played:", movesPlayed, nextMove)
+        let fen = getFenString(board);
+        console.log(`position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves`)
+        p.stdin.write(`position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves \n`)
+        p.stdin.write("go depth 21 \n")
     });
 
     await page.goto(chessLoginUrl);
 
-    // await page.waitForNavigation({
-    //     waitUntil: waitUntil
-    // })
     await Wait(2000);
 
     let username = credentials[0];
@@ -72,50 +99,105 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
         waitUntil: ['domcontentloaded']
     })
 
-    await Wait(1000);
-
-    // page.on('console', msg => {
-    //     console.log('PAGE LOG:', ...msg.args)
-    // });
-
+    await Wait(2000);
 
     await page.evaluate(() => {
-        debugger;
-        var whiteMoves = [];
-        var blackMoves = [];
 
-        var movesList = document.getElementsByClassName('vertical-move-list')[0].children;
+        function Scrape() {
 
-        console.log(movesList);
+            var movesList = document.getElementsByClassName('vertical-move-list')[0].children;
+            var nextMove = '';
+            var castle = 'KQkq'
+            var isWhiteCastle = true;
+            var isBlackCastle = true;
 
-        for (let i = 0; i < movesList.length; i++) {
+            for (let i = 0; i < movesList.length; i++) {
 
-            let whiteMove = movesList[i].querySelector('.white');
-            let blackMove = movesList[i].querySelector('.black');
+                let whiteMove = movesList[i].querySelector('.white');
+                let blackMove = movesList[i].querySelector('.black');
 
-            if (whiteMove) {
-                whiteMoves.push(whiteMove.innerText);
+                if (whiteMove) {
+                    if (whiteMove.innerText == 'O-O') {
+                        if (isBlackCastle) {
+                            castle = 'kq'
+                            isWhiteCastle = false;
+                        } else {
+                            castle = '-'
+                        }
+                    }
+                }
+
+                if (blackMove) {
+
+                    if (blackMove.innerText == 'O-O') {
+                        if (isWhiteCastle) {
+                            castle = 'KQ'
+                            isBlackCastle = false;
+                        } else {
+                            castle = '-'
+                        }
+                    }
+                }
+
+                if (i <= movesList.length) {
+
+                    if (whiteMove) {
+                        nextMove = 'b'
+
+                        if (whiteMove.innerText == 'O-O') {
+                            castle = 'kq'
+                        }
+                    }
+
+                    if (blackMove) {
+                        nextMove = 'w'
+
+                        if (blackMove.innerText == 'O-O') {
+                            castle = 'KQ'
+                        }
+                    }
+                }
+
             }
-            if (blackMove) {
-                blackMoves.push(blackMove.innerText);
-            }
+
+            var squares = document.getElementsByClassName('board')[0].querySelectorAll('.piece');
+            console.log(squares);
+            var list = [];
+            squares.forEach(f => {
+                // console.log(f.className);
+                list.push(f.className);
+            });
+            window.extractMoves(movesList.length, nextMove, castle, list);
         }
 
-        window.extractMoves(whiteMoves, blackMoves);
+        Scrape()
 
-        // -----------------------------------------------------------------------------------------------------------------------------
+        const targetNode = document.getElementsByClassName('vertical-move-list')[0]
 
-        var squares = document.getElementsByClassName('board')[0].querySelectorAll('.piece');
-        console.log(squares);
-        var list = [];
-        squares.forEach(f => {
-            // console.log(f.className);
-            list.push(f.className);
-        });
-        window.getFenString(list);
+        // Options for the observer (which mutations to observe)
+        const config = {
+            attributes: true,
+            childList: true,
+            subtree: true
+        };
+
+        // Callback function to execute when mutations are observed
+        const callback = function (mutationsList, observer) {
+            // Use traditional 'for loops' for IE 11
+            Scrape()
+        };
+
+        // Create an observer instance linked to the callback function
+        const observer = new MutationObserver(callback);
+
+        // Start observing the target node for configured mutations
+        observer.observe(targetNode, config);
     });
 
+    p.stdin.end();
+
 })();
+
 
 const Wait = (time) => {
 

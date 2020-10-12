@@ -4,3 +4,5 @@ node_modules
 geckodriver.log
 credentials.txt
 url.txt
+libmain.so
+test.js
