@@ -108,7 +108,7 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
         waitUntil: ['domcontentloaded']
     })
 
-    await Wait(2000);
+    await Wait(3000);
 
     await page.evaluate(() => {
 
@@ -141,7 +141,7 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
                         } else {
                             castle = '-'
                         }
-                    } else if (whiteMove.innerText = 'O-O-O') {
+                    } else if (whiteMove.innerText == 'O-O-O') {
                         if (isBlackCastle) {
                             castle = 'kq'
                             isWhiteCastle = false;
@@ -175,7 +175,7 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
                         } else {
                             castle = '-'
                         }
-                    } else if (blackMove.innerText = 'O-O-O') {
+                    } else if (blackMove.innerText == 'O-O-O') {
                         if (isWhiteCastle) {
                             castle = 'KQ'
                             isBlackCastle = false;

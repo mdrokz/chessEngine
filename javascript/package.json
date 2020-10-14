@@ -12,6 +12,6 @@
   "author": "mdrokz",
   "license": "ISC",
   "dependencies": {
-    "ref-array": "^1.2.0"
+    "puppeteer": "^5.3.1"
   }
 }
