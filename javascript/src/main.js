@@ -131,10 +131,6 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
                     if(whiteMove.children[0]) {
                         move = whiteMove.children[0].attributes[0].value;
-                    }
-
-                    if(move) {
-
                         piece = move.includes('rook') || move.includes('king')
                     }
 
@@ -169,9 +165,6 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
                     if(blackMove.children[0]) {
                         move = blackMove.children[0].attributes[0].value;
-                    }
-
-                    if(move) {
                         piece = move.includes('rook') || move.includes('king')
                     }
 
@@ -203,18 +196,10 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
                     if (whiteMove) {
                         nextMove = 'b'
-
-                        if (whiteMove.innerText == 'O-O') {
-                            castle = 'kq'
-                        }
                     }
 
                     if (blackMove) {
                         nextMove = 'w'
-
-                        if (blackMove.innerText == 'O-O') {
-                            castle = 'KQ'
-                        }
                     }
                 }
 
