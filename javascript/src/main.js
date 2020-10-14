@@ -42,7 +42,7 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
     let stockfishEngine = "";
 
-    if(process.platform == 'win32') {
+    if (process.platform == 'win32') {
         stockfishEngine = "stockfish_20090216_x64.exe"
     } else {
         stockfishEngine = "./stockfish"
@@ -126,6 +126,18 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
                 let blackMove = movesList[i].querySelector('.black');
 
                 if (whiteMove) {
+                    let move;
+                    let piece = false;
+
+                    if(whiteMove.children[0]) {
+                        move = whiteMove.children[0].attributes[0].value;
+                    }
+
+                    if(move) {
+
+                        piece = move.includes('rook') || move.includes('king')
+                    }
+
                     if (whiteMove.innerText == 'O-O') {
                         if (isBlackCastle) {
                             castle = 'kq'
@@ -133,7 +145,14 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
                         } else {
                             castle = '-'
                         }
-                    } else if(whiteMove.innerText = 'O-O-O') {
+                    } else if (whiteMove.innerText = 'O-O-O') {
+                        if (isBlackCastle) {
+                            castle = 'kq'
+                            isWhiteCastle = false;
+                        } else {
+                            castle = '-'
+                        }
+                    } else if (piece) {
                         if (isBlackCastle) {
                             castle = 'kq'
                             isWhiteCastle = false;
@@ -145,6 +164,17 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
                 if (blackMove) {
 
+                    let move;
+                    let piece = false;
+
+                    if(blackMove.children[0]) {
+                        move = blackMove.children[0].attributes[0].value;
+                    }
+
+                    if(move) {
+                        piece = move.includes('rook') || move.includes('king')
+                    }
+
                     if (blackMove.innerText == 'O-O') {
                         if (isWhiteCastle) {
                             castle = 'KQ'
@@ -152,9 +182,16 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
                         } else {
                             castle = '-'
                         }
-                    } else if(blackMove.innerText = 'O-O-O') {
+                    } else if (blackMove.innerText = 'O-O-O') {
                         if (isWhiteCastle) {
-                            castle = 'kq'
+                            castle = 'KQ'
+                            isBlackCastle = false;
+                        } else {
+                            castle = '-'
+                        }
+                    } else if (piece) {
+                        if (isWhiteCastle) {
+                            castle = 'KQ'
                             isBlackCastle = false;
                         } else {
                             castle = '-'
