@@ -4,7 +4,10 @@ import strutils
 
 import nre
 
-var list = ["piece wr square-11",
+# import strmisc
+
+var list = [
+     "piece wr square-11",
      "piece wk square-71",
      "piece wr square-62",
      "piece wp square-13",
@@ -21,14 +24,11 @@ var list = ["piece wr square-11",
      "piece wq square-76",
      "piece bp square-17",
      "piece bp square-37"
- ];
+];
 
 type ChessBoard = seq[seq[string]]
 
-var chessBoard: ChessBoard = newSeq[seq[string]](9);
-
-for i,_ in chessBoard: 
-  chessBoard[i] = newSeq[string](9);
+var chessBoard: ChessBoard;
 
 proc getPieceInitials(piece: string): string =
   if piece.len() > 0:
@@ -62,13 +62,23 @@ proc getPieceInitials(piece: string): string =
     return "1"
 
 
-proc replaceAt(str: string,index: int,replacement: int): string =
-    if index >= str.len():
+proc replaceAt(str: string,i: int,replacement: int): string =
+    if i >= str.len():
       return str
-    echo index
-    return str.substr(0, index) & $replacement & str.substr(index + 1)
+    # echo index
+    echo str.substr(0,i)
+    # return str.substr(0, i) & $replacement & str.substr(i + 1)
+
+
 
 proc getFenString(list: array[0..16,string]): void {.stdcall,exportc,dynlib.} =
+
+  chessBoard = newSeq[seq[string]](9);
+
+  for i,_ in chessBoard: 
+    chessBoard[i] = newSeq[string](9);
+
+
   for f in list:
     var className:string = $f
     var captured: seq[int] = newSeq[int](2)
@@ -96,31 +106,28 @@ proc getFenString(list: array[0..16,string]): void {.stdcall,exportc,dynlib.} =
      strFen &= "/" 
     
   var x = strFen.split("/")
-  var y = newSeq[string]()
   echo x
-  for v in x:
-    var newFen = ""
-    var occ = 0
-
-    for i in 0..<8:
-      echo v
-      if v[i] == '1':
+  var y = newSeq[string]()
+  for f in x:
+   var newFen = ""
+   var occ = 0
+   for i in 0..<8:
+      if f[i] == '1':
         occ += 1
-
         if occ > 1:
           var pos = newFen.len() - 1;
-          newFen = replaceAt(newFen, pos, occ);
           # echo newFen
+          discard replaceAt(newFen, pos, occ);
         else:
-          newFen &= v[i]
+          newFen &= f[i]
       else:
         occ = 0
-        newFen &= v[i]
+        newFen &= f[i]
 
-    y.add(newFen)
+   y.add(newFen)
 
   var fen = y.join("/")
-  # echo fen
+  echo fen
 
 
 

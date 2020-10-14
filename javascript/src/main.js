@@ -133,6 +133,13 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
                         } else {
                             castle = '-'
                         }
+                    } else if(whiteMove.innerText = 'O-O-O') {
+                        if (isBlackCastle) {
+                            castle = 'kq'
+                            isWhiteCastle = false;
+                        } else {
+                            castle = '-'
+                        }
                     }
                 }
 
@@ -141,6 +148,13 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
                     if (blackMove.innerText == 'O-O') {
                         if (isWhiteCastle) {
                             castle = 'KQ'
+                            isBlackCastle = false;
+                        } else {
+                            castle = '-'
+                        }
+                    } else if(blackMove.innerText = 'O-O-O') {
+                        if (isWhiteCastle) {
+                            castle = 'kq'
                             isBlackCastle = false;
                         } else {
                             castle = '-'
