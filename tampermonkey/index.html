@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"></script>
+
+<script>
+    var settings = {
+        "url": "https://localhost:44366/api/uci/GetBestMoves",
+        "method": "POST",
+        "timeout": 0,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "data": JSON.stringify({
+            "FenString": "position fen r1bqkb1r/ppp2ppp/2np1n2/4p3/3PP3/2N1BN2/PPP2PPP/R2QKB1R b KQkq - 0 5 moves",
+            "Depth": 15,
+            "MultiPv": 5
+        }),
+    };
+
+    $.ajax(settings).done(function (response) {
+        console.log(response);
+    });
+</script>
+
+</html>
