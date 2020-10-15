@@ -7,18 +7,24 @@ This Engine will tell you best moves when you play on https://chess.com it requi
 
 in url.txt you have to put the url of your chess game example -
 
-https://www.chess.com/game/live/5585942588
+https://www.chess.com/game/live/id
+
+![url](https://github.com/mdrokz/chessEngine/blob/master/examples/url.png)
 
 # credentials.txt
 
 in credentials.txt you need to put your dummy account's username and password, username has to be in first line and password has to be in second line example -
 
-username
+username <br />
 password
+
+![credentials](https://github.com/mdrokz/chessEngine/blob/master/examples/credentials.png)
 
 # chromium window
 
 when you run the engine binary it opens a chromium window you have to keep that in focus for the engine to get your latest moves and calculate them
+
+![chromium](https://github.com/mdrokz/chessEngine/blob/master/examples/chromium.png)
 
 
 # how it works
@@ -43,3 +49,8 @@ TODO
 # building binaries
 
 this project uses nexe for packing javascript and node binaries into exe you can go into javascript directory and run linux_build.sh for linux build or win_build.sh for windows build
+
+# Releases
+
+https://github.com/mdrokz/chessEngine/releases/tag/1.0.0
+
