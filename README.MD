@@ -49,3 +49,8 @@ TODO
 # building binaries
 
 this project uses nexe for packing javascript and node binaries into exe you can go into javascript directory and run linux_build.sh for linux build or win_build.sh for windows build
+
+# Releases
+
+https://github.com/mdrokz/chessEngine/releases/tag/1.0.0
+
