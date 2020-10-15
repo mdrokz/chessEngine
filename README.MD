@@ -9,11 +9,13 @@ in url.txt you have to put the url of your chess game example -
 
 https://www.chess.com/game/live/5585942588
 
+![url.png](https://github.com/mdrokz/chessEngine/blob/master/examples/)
+
 # credentials.txt
 
 in credentials.txt you need to put your dummy account's username and password, username has to be in first line and password has to be in second line example -
 
-username
+username <br />
 password
 
 # chromium window
