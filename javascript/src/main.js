@@ -11,11 +11,10 @@ const cp = require('child_process')
 // const ref = require('ref');
 // const refArray = require('ref-array');
 
+const debug = true;
+
 // modules
 const getFenString = require('./chessFenScript');
-const {
-    stdin
-} = require('process');
 
 const rl = readline.createInterface(fs.createReadStream('./credentials.txt'));
 
@@ -25,27 +24,57 @@ const chessLoginUrl = "https://chess.com/login";
 
 const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
+// console.log(fs.readdirSync('./'));
+const Wait = (time) => {
+
+    return new Promise((resolve, reject) => {
+
+        setTimeout(() => {
+            resolve(null);
+        }, time);
+
+    });
+
+}
+
+
 (async () => {
+
+    if(!fs.existsSync('./url.txt'))
+    fs.writeFileSync('./url.txt', "");
+    
+    if(!fs.existsSync('./credentials.txt'))
+    fs.writeFileSync('./credentials.txt', "");
     // var CArray = refArray('string')
 
     // var main = ffi.Library('../src/libmain', {
     //     'getFenString': ['void', [CArray]]
     // })
 
-    console.log('Scraper Started...');
-
     const url = fs.readFileSync('./url.txt').toString();
+
+    if (url == "") {
+        console.error("ERROR: url.txt is empty")
+        process.exit(1)
+    }
 
     rl.on('line', (input) => {
         credentials.push(input);
     });
 
+    await Wait(1000);
+
+    if (!credentials[0]) {
+        console.log("credentials.txt is empty")
+        process.exit(1)
+    }
+
     let stockfishEngine = "";
 
     if (process.platform == 'win32') {
-        stockfishEngine = "stockfish_20090216_x64.exe"
+        stockfishEngine = "./src/stockfish_20090216_x64.exe"
     } else {
-        stockfishEngine = "./stockfish"
+        stockfishEngine = "./src/stockfish"
     }
 
     const p = cp.spawn(stockfishEngine, {
@@ -54,9 +83,8 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
     p.stdout.on('data', (data) => {
         let line = data.toString();
-        console.log(data.toString());
+        console.log(line);
     })
-
 
     p.stdin.write("uci\n");
 
@@ -67,8 +95,11 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
             width: 1920 / 2,
             height: 1080
         },
+        executablePath: debug ? null : './.local-chromium/linux-800071/chrome-linux/chrome',
         headless: false
     })
+
+    console.log('Scraper Started...');
 
     const page = await browser.newPage();
 
@@ -129,7 +160,7 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
                     let move;
                     let piece = false;
 
-                    if(whiteMove.children[0]) {
+                    if (whiteMove.children[0]) {
                         move = whiteMove.children[0].attributes[0].value;
                         piece = move.includes('rook') || move.includes('king')
                     }
@@ -163,7 +194,7 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
                     let move;
                     let piece = false;
 
-                    if(blackMove.children[0]) {
+                    if (blackMove.children[0]) {
                         move = blackMove.children[0].attributes[0].value;
                         piece = move.includes('rook') || move.includes('king')
                     }
@@ -242,16 +273,3 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
     // p.stdin.end();
 
 })();
-
-
-const Wait = (time) => {
-
-    return new Promise((resolve, reject) => {
-
-        setTimeout(() => {
-            resolve(null);
-        }, time);
-
-    });
-
-}

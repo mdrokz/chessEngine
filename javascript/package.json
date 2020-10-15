@@ -2,7 +2,8 @@
   "name": "chess-engine",
   "version": "1.0.0",
   "description": "an chess engine",
-  "main": "main.js",
+  "main": "src/main.js",
+  "bin": "src/main.js",
   "scripts": {
     "start": "node src/main.js"
   },

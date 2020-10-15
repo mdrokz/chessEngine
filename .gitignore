@@ -1,5 +1,7 @@
 main
 node_modules
+.local-chromium
+build
 
 geckodriver.log
 credentials.txt
