@@ -7,7 +7,7 @@ This Engine will tell you best moves when you play on https://chess.com it requi
 
 in url.txt you have to put the url of your chess game example -
 
-https://www.chess.com/game/live/5585942588
+https://www.chess.com/game/live/id
 
 ![url](https://github.com/mdrokz/chessEngine/blob/master/examples/url.png)
 
