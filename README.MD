@@ -9,7 +9,7 @@ in url.txt you have to put the url of your chess game example -
 
 https://www.chess.com/game/live/5585942588
 
-![url.png](https://github.com/mdrokz/chessEngine/blob/master/examples/)
+![url](https://github.com/mdrokz/chessEngine/blob/master/examples/url.png)
 
 # credentials.txt
 
