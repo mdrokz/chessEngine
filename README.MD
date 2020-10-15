@@ -18,9 +18,13 @@ in credentials.txt you need to put your dummy account's username and password, u
 username <br />
 password
 
+![credentials](https://github.com/mdrokz/chessEngine/blob/master/examples/credentials.png)
+
 # chromium window
 
 when you run the engine binary it opens a chromium window you have to keep that in focus for the engine to get your latest moves and calculate them
+
+![chromium](https://github.com/mdrokz/chessEngine/blob/master/examples/chromium.png)
 
 
 # how it works
