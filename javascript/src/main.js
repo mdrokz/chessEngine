@@ -11,7 +11,7 @@ const cp = require('child_process')
 // const ref = require('ref');
 // const refArray = require('ref-array');
 
-const debug = true;
+const debug = false;
 
 // modules
 const getFenString = require('./chessFenScript');
@@ -53,6 +53,8 @@ const Wait = (time) => {
 
     const url = fs.readFileSync('./url.txt').toString();
 
+    let chromeBinary = "";
+
     if (url == "") {
         console.error("ERROR: url.txt is empty")
         process.exit(1)
@@ -73,8 +75,10 @@ const Wait = (time) => {
 
     if (process.platform == 'win32') {
         stockfishEngine = "./src/stockfish_20090216_x64.exe"
+        chromeBinary = './.local-chromium/win64-800071/chrome-win/chrome.exe'
     } else {
         stockfishEngine = "./src/stockfish"
+        chromeBinary = '.local-chromium/linux-800071/chrome-linux/chrome'
     }
 
     const p = cp.spawn(stockfishEngine, {
@@ -95,7 +99,7 @@ const Wait = (time) => {
             width: 1920 / 2,
             height: 1080
         },
-        executablePath: debug ? null : './.local-chromium/linux-800071/chrome-linux/chrome',
+        executablePath: debug ? null : chromeBinary,
         headless: false
     })
 
