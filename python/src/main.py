@@ -4,6 +4,9 @@ import selenium
 from selenium.common.exceptions import NoSuchElementException
 
 
+def extractMoves(movesPlayed, nextMove, castle, board):
+    print(movesPlayed,nextMove,castle,board)
+
 credentialFile = open("../../credentials.txt", "r")
 
 urlFile = open("../../url.txt", "r")
@@ -47,6 +50,6 @@ submitButton.click()
 
 browser.get(url)
 
-print(browser.execute_script(script))
+browser.execute_script(script,extractMoves)
 
 browser.close()

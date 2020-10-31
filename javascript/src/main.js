@@ -7,17 +7,16 @@ const fs = require('fs');
 const cp = require('child_process')
 
 // FFI
-const ffi = require('ffi');
-const ref = require('ref');
-const refArray = require('ref-array');
+// const ffi = require('ffi');
+// const ref = require('ref');
+// const refArray = require('ref-array');
+
+const debug = false;
 
 // modules
 const getFenString = require('./chessFenScript');
-const {
-    stdin
-} = require('process');
 
-const rl = readline.createInterface(fs.createReadStream('../credentials.txt'));
+const rl = readline.createInterface(fs.createReadStream('./credentials.txt'));
 
 var credentials = [];
 
@@ -25,30 +24,71 @@ const chessLoginUrl = "https://chess.com/login";
 
 const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
+// console.log(fs.readdirSync('./'));
+const Wait = (time) => {
+
+    return new Promise((resolve, reject) => {
+
+        setTimeout(() => {
+            resolve(null);
+        }, time);
+
+    });
+
+}
+
+
 (async () => {
-    var CArray = refArray('string')
 
-    var main = ffi.Library('../src/libmain', {
-        'getFenString': ['void', [CArray]]
-    })
+    if(!fs.existsSync('./url.txt'))
+    fs.writeFileSync('./url.txt', "");
+    
+    if(!fs.existsSync('./credentials.txt'))
+    fs.writeFileSync('./credentials.txt', "");
+    // var CArray = refArray('string')
 
-    console.log('Scraper Started...');
+    // var main = ffi.Library('../src/libmain', {
+    //     'getFenString': ['void', [CArray]]
+    // })
 
-    const url = fs.readFileSync('../url.txt').toString();
+    const url = fs.readFileSync('./url.txt').toString();
+
+    let chromeBinary = "";
+
+    if (url == "") {
+        console.error("ERROR: url.txt is empty")
+        process.exit(1)
+    }
 
     rl.on('line', (input) => {
         credentials.push(input);
     });
 
-    const p = cp.spawn('../stockfish', {
+    await Wait(1000);
+
+    if (!credentials[0]) {
+        console.log("credentials.txt is empty")
+        process.exit(1)
+    }
+
+    let stockfishEngine = "";
+
+    if (process.platform == 'win32') {
+        stockfishEngine = "./src/stockfish_20090216_x64.exe"
+        chromeBinary = './.local-chromium/win64-800071/chrome-win/chrome.exe'
+    } else {
+        stockfishEngine = "./src/stockfish"
+        chromeBinary = '.local-chromium/linux-800071/chrome-linux/chrome'
+    }
+
+    const p = cp.spawn(stockfishEngine, {
         shell: true,
     });
 
     p.stdout.on('data', (data) => {
         let line = data.toString();
-        console.log(data.toString());
+        console.log(line);
     })
-
 
     p.stdin.write("uci\n");
 
@@ -59,16 +99,20 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
             width: 1920 / 2,
             height: 1080
         },
+        executablePath: debug ? null : chromeBinary,
         headless: false
     })
+
+    console.log('Scraper Started...');
 
     const page = await browser.newPage();
 
     await page.exposeFunction("extractMoves", (movesPlayed, nextMove, castle, board) => {
         console.log("Moves Played:", movesPlayed, nextMove)
         let fen = getFenString(board);
-        console.log(`position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves`)
-        p.stdin.write(`position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves \n`)
+        let cmd = `position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves \n`
+        console.log(cmd)
+        p.stdin.write(cmd);
         p.stdin.write("go depth 21 \n")
     });
 
@@ -99,7 +143,7 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
         waitUntil: ['domcontentloaded']
     })
 
-    await Wait(2000);
+    await Wait(3000);
 
     await page.evaluate(() => {
 
@@ -117,7 +161,29 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
                 let blackMove = movesList[i].querySelector('.black');
 
                 if (whiteMove) {
+                    let move;
+                    let piece = false;
+
+                    if (whiteMove.children[0]) {
+                        move = whiteMove.children[0].attributes[0].value;
+                        piece = move.includes('rook') || move.includes('king')
+                    }
+
                     if (whiteMove.innerText == 'O-O') {
+                        if (isBlackCastle) {
+                            castle = 'kq'
+                            isWhiteCastle = false;
+                        } else {
+                            castle = '-'
+                        }
+                    } else if (whiteMove.innerText == 'O-O-O') {
+                        if (isBlackCastle) {
+                            castle = 'kq'
+                            isWhiteCastle = false;
+                        } else {
+                            castle = '-'
+                        }
+                    } else if (piece) {
                         if (isBlackCastle) {
                             castle = 'kq'
                             isWhiteCastle = false;
@@ -129,7 +195,29 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
                 if (blackMove) {
 
+                    let move;
+                    let piece = false;
+
+                    if (blackMove.children[0]) {
+                        move = blackMove.children[0].attributes[0].value;
+                        piece = move.includes('rook') || move.includes('king')
+                    }
+
                     if (blackMove.innerText == 'O-O') {
+                        if (isWhiteCastle) {
+                            castle = 'KQ'
+                            isBlackCastle = false;
+                        } else {
+                            castle = '-'
+                        }
+                    } else if (blackMove.innerText == 'O-O-O') {
+                        if (isWhiteCastle) {
+                            castle = 'KQ'
+                            isBlackCastle = false;
+                        } else {
+                            castle = '-'
+                        }
+                    } else if (piece) {
                         if (isWhiteCastle) {
                             castle = 'KQ'
                             isBlackCastle = false;
@@ -143,18 +231,10 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
 
                     if (whiteMove) {
                         nextMove = 'b'
-
-                        if (whiteMove.innerText == 'O-O') {
-                            castle = 'kq'
-                        }
                     }
 
                     if (blackMove) {
                         nextMove = 'w'
-
-                        if (blackMove.innerText == 'O-O') {
-                            castle = 'KQ'
-                        }
                     }
                 }
 
@@ -194,19 +274,6 @@ const waitUntil = ['domcontentloaded', 'load', 'networkidle0', 'networkidle2'];
         observer.observe(targetNode, config);
     });
 
-    p.stdin.end();
+    // p.stdin.end();
 
 })();
-
-
-const Wait = (time) => {
-
-    return new Promise((resolve, reject) => {
-
-        setTimeout(() => {
-            resolve(null);
-        }, time);
-
-    });
-
-}

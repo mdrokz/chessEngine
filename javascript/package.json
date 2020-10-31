@@ -2,7 +2,8 @@
   "name": "chess-engine",
   "version": "1.0.0",
   "description": "an chess engine",
-  "main": "main.js",
+  "main": "src/main.js",
+  "bin": "src/main.js",
   "scripts": {
     "start": "node src/main.js"
   },
@@ -12,9 +13,6 @@
   "author": "mdrokz",
   "license": "ISC",
   "dependencies": {
-    "ffi": "^2.3.0",
-    "puppeteer": "^5.3.1",
-    "ref": "^1.3.5",
-    "ref-array": "^1.2.0"
+    "puppeteer": "^5.3.1"
   }
 }
