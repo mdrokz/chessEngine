@@ -15,6 +15,9 @@
 (function (jsfx) {
     'use strict';
 
+    //jsfx.apiUrl = "http://localhost:44366";
+    jsfx.apiUrl = "http://localhost:8001";
+
     jsfx.addJQuery =
         function addJQuery(callback) {
             var script = document.createElement("script");
@@ -87,7 +90,7 @@
             // console.log(f.className);
             list.push(f.className);
         });
-        console.log(list);
+        // console.log(list);
 
 
 
@@ -161,7 +164,7 @@
 
 
             var fen = y.join('/');
-            console.log(fen);
+            // console.log(fen);
             // ----------------------------------------------------------------------------------------------------------------------------------
             // ----------------------------------------------------------------------------------------------------------------------------------
             var vmlElement = document.getElementsByClassName('vertical-move-list')[0];
@@ -224,34 +227,48 @@
             var cmdFen = `position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves \n`;
             // p.stdin.write(`position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves \n`)
             // p.stdin.write("go depth 21 \n")
-            console.log(cmdFen);
+            // console.log(cmdFen);
         }
 
         jsfx.apiSuccess = function (response) {
-            console.log(response);
+            // console.log(response);
+            var divLines = $('.chessLines')[0];
+            if (divLines) {
+                // $(divLines).text(this.responseText);
+                // $(divLines).html(this.responseText);
+                divLines.innerText = response;
+            }
         }
 
-        var settings = {
-            "url": "https://localhost:44366/api/uci/GetBestMoves",
-            "method": "POST",
-            "timeout": 0,
-            "headers": {
-                "Content-Type": "application/json"
-            },
-            "data": JSON.stringify({
-                "FenString": cmdFen,
-                "Depth": 15,
-                "MultiPv": 5
-            }),
-        };
+        var data = JSON.stringify({
+            "FenString": cmdFen,
+            "Depth": 15,
+            "MultiPv": 5,
+            "WaitTime": 3
+        });
 
-        $.ajax(settings).done(jsfx.apiSuccess);
+        var xhr = new XMLHttpRequest();
+
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                jsfx.apiSuccess(this.responseText);
+            }
+        });
+
+        xhr.open("POST", jsfx.apiUrl + "/api/uci/GetBestMoves");
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.send(data);
     }
 
     setTimeout(() => {
+        var mainDiv = document.createElement('div');
+        mainDiv.id = "mainDiv";
+        mainDiv.style = "width: 10px; position: absolute; right: 10px; bottom: 0px; background-color: #8080807d;";
+        // ----------------------------------------------------------------------------------------------------------------------------------
         var btnHint = document.createElement('button');
         btnHint.className = 'ui_v5-button-component ui_v5-button-basic ui_v5-button-small board-main-control-button-button';
-        btnHint.style.width = '100px';
+        btnHint.style.width = '10px';
         btnHint.onclick = function onHintClick(e) {
             jsfx.genFenScript();
         };
@@ -259,7 +276,61 @@
         if (btnBar) {
             btnBar.appendChild(btnHint);
         }
-        document.body.appendChild(btnHint);
+        // document.body.appendChild(btnHint);
+        mainDiv.append(btnHint);
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        var divLines = document.createElement('div');
+        divLines.className = 'chessLines';
+        // document.body.appendChild(divLines);
+        mainDiv.append(divLines);
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        var btnCollapse = document.createElement('button');
+        btnCollapse.onclick = function (e) {
+            var mDiv = $('#mainDiv')[0];
+            var dl = $('.chessLines')[0];
+            if (mDiv) {
+                if (mDiv.offsetWidth < 100) {
+                    $(mDiv).css("width", "800px");
+                    if (dl) {
+                        $(dl).css('display', 'block');
+                    }
+                } else {
+                    $(mDiv).css("width", "20px");
+                    if (dl) {
+                        $(dl).css('display', 'none');
+                    }
+                }
+            }
+        };
+        mainDiv.append(btnCollapse);
+        // ----------------------------------------------------------------------------------------------------------------------------------
+
+        document.body.appendChild(mainDiv);
     }, 3000);
 
 })(this.jsfx = {});
+
+
+
+
+// function jqeuryAjaxCall() {
+//     var settings = {
+//         "url": "http://localhost:8001/api/uci/GetBestMoves",
+//         "method": "POST",
+//         "timeout": 0,
+//         "headers": {
+//             "Content-Type": "application/json"
+//         },
+//         "data": JSON.stringify({
+//             "FenString": cmdFen,
+//             "Depth": 15,
+//             "MultiPv": 5
+//         }),
+//     };
+
+//     var ajax = $.ajax(settings);
+//     ajax.done = function (response) {
+//         debugger;
+//         console.log(response);
+//     }
+// }
