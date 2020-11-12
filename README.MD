@@ -30,6 +30,8 @@ password
 
 for the engine to read your moves on chess.com you have to disable animations in https://www.chess.com/settings/board
 
+for your dummy account
+
 ![settings](https://github.com/mdrokz/chessEngine/blob/master/examples/settings.png)
 
 # chromium window
