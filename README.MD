@@ -3,6 +3,12 @@
 This Engine will tell you best moves when you play on https://chess.com it requires an dummy account that can spectate your match on chess.com
 
 
+# Tutorial
+
+
+![chessengine_tutorial](https://github.com/mdrokz/chessEngine/blob/master/examples/chessengine_tutorial.gif)
+
+
 # url.txt
 
 in url.txt you have to put the url of your chess game example -
