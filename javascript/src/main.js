@@ -5,6 +5,7 @@ const puppeteer = require('puppeteer');
 const readline = require('readline');
 const fs = require('fs');
 const cp = require('child_process')
+const resolve = require('path').resolve
 
 // FFI
 // const ffi = require('ffi');
@@ -74,7 +75,7 @@ const Wait = (time) => {
     let stockfishEngine = "";
 
     if (process.platform == 'win32') {
-        stockfishEngine = "./src/stockfish_20090216_x64.exe"
+        stockfishEngine = resolve("./stockfish_20090216_x64.exe")
         chromeBinary = './.local-chromium/win64-800071/chrome-win/chrome.exe'
     } else {
         stockfishEngine = "./src/stockfish"
@@ -88,6 +89,10 @@ const Wait = (time) => {
     p.stdout.on('data', (data) => {
         let line = data.toString();
         console.log(line);
+    })
+
+    p.stderr.on('data',(s) => {
+        console.log(s.toString())
     })
 
     p.stdin.write("uci\n");
