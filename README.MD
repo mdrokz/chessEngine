@@ -34,6 +34,8 @@ for your dummy account
 
 ![settings](https://github.com/mdrokz/chessEngine/blob/master/examples/settings.png)
 
+Set the Animation Type in the dropdown to None
+
 # chromium window
 
 when you run the engine binary it opens a chromium window you have to keep that in focus for the engine to get your latest moves and calculate them
