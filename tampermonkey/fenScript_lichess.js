@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name          Chess Fen Script Generator
+// @name          Li-Chess Fen Script Generator
 // @namespace
 // @description	  Generates Fen Script
-// @include       https://www.chess.com/*
+// @include       https://lichess.org/*
 // @version       0.0.2
 // @grant         none
 // ==/UserScript==
@@ -29,39 +29,39 @@
             // }, false);
             document.body.appendChild(script);
         }
-    jsfx.addJQuery();
+    // jsfx.addJQuery();
 
     jsfx.getPieceInitals =
         function getPieceInitals(piece) {
             if (piece && piece != '') {
                 switch (piece) {
-                    case 'wp':
+                    case 'white pawn':
                         return 'P';
-                    case 'wr':
+                    case 'white rook':
                         return 'R';
-                    case 'wn':
+                    case 'white knight':
                         return 'N';
-                    case 'wb':
+                    case 'white bishop':
                         return 'B';
-                    case 'wq':
+                    case 'white queen':
                         return 'Q';
-                    case 'wk':
+                    case 'white king':
                         return 'K';
 
 
                         // ---------------------
 
-                    case 'bp':
+                    case 'black pawn':
                         return 'p';
-                    case 'br':
+                    case 'black rook':
                         return 'r';
-                    case 'bn':
+                    case 'black knight':
                         return 'n';
-                    case 'bb':
+                    case 'black bishop':
                         return 'b';
-                    case 'bq':
+                    case 'black queen':
                         return 'q';
-                    case 'bk':
+                    case 'black king':
                         return 'k';
 
                     default:
@@ -83,16 +83,13 @@
     jsfx.genFenScript = function () {
         // var list = ["piece wr square-11", "piece wn square-21", "piece wb square-31", "piece wq square-41", "piece wk square-51", "piece wb square-61", "piece wn square-63", "piece wr square-81", "piece wp square-12", "piece wp square-22", "piece wp square-32", "piece wp square-52", "piece wp square-62", "piece wp square-72", "piece wp square-82", "piece bq square-66", "piece bp square-17", "piece bp square-27", "piece bp square-37", "piece bp square-47", "piece bp square-77", "piece bp square-87", "piece br square-18", "piece bn square-28", "piece bb square-38", "piece bk square-58", "piece bb square-68", "piece bn square-78", "piece br square-88"];
         var chessBoard = null;
-
-        var squares = document.getElementsByClassName('board')[0].querySelectorAll('.piece');
+        var sqWidth = 0;
+        var sqHeight = 0;
+        // ----------
+        var squares = document.querySelector('cg-board').querySelectorAll('piece');
+        sqWidth = squares[0].clientWidth;
+        sqHeight = squares[0].clientHeight;
         var list = [];
-        squares.forEach(f => {
-            // console.log(f.className);
-            list.push(f.className);
-        });
-        // console.log(list);
-
-
 
         {
             chessBoard = new Array(8);
@@ -101,32 +98,79 @@
                 chessBoard[i] = new Array(8);
             }
 
-            list.forEach(f => {
-                // var className = 'piece bq square-53';
-                var className = f;
-                var regexp = /square-\d\d/;
+            squares.forEach(f => {
+                // console.log(f.className);
+                // list.push(f.className);
+                var sq = f.cgKey;
+                var piece = f.cgPiece;
+                var i = 0;
+                var j = 0;
+                if (piece && piece != '' && piece != 'ghost') {
+                    switch (sq[0]) {
+                        case 'a':
+                            i = 8;
+                            break;
 
-                var match = className.match(regexp);
-                if (match[0] && match[0] != '') {
-                    var sqMatch = match[0].match(/\d\d/);
-                    if (sqMatch[0] && sqMatch[0] != '') {
-                        var sqNum = sqMatch[0];
+                        case 'b':
+                            i = 7;
+                            break;
+
+                        case 'c':
+                            i = 6;
+                            break;
+
+                        case 'd':
+                            i = 5;
+                            break;
+
+                        case 'e':
+                            i = 4;
+                            break;
+
+                        case 'f':
+                            i = 3;
+                            break;
+
+                        case 'g':
+                            i = 2;
+                            break;
+
+                        case 'h':
+                            i = 1;
+                            break;
                     }
+                    j = sq[1];
+
+                    chessBoard[j][i] = piece;
                 }
+            });
 
-                var p = className.match(/\s..\s/);
-                if (p[0] && p[0] != '') {
-                    var piece = p[0].trim();
-                }
+            // list.forEach(f => {
+            //     // var className = 'piece bq square-53';
+            //     var className = f;
+            //     var regexp = /square-\d\d/;
 
-                // console.log(sqNum);
+            //     var match = className.match(regexp);
+            //     if (match[0] && match[0] != '') {
+            //         var sqMatch = match[0].match(/\d\d/);
+            //         if (sqMatch[0] && sqMatch[0] != '') {
+            //             var sqNum = sqMatch[0];
+            //         }
+            //     }
 
-                chessBoard[sqNum[1]][sqNum[0]] = piece;
-            })
+            //     var p = className.match(/\s..\s/);
+            //     if (p[0] && p[0] != '') {
+            //         var piece = p[0].trim();
+            //     }
+
+            //     // console.log(sqNum);
+
+            //     chessBoard[sqNum[1]][sqNum[0]] = piece;
+            // })
 
             var strFen = '';
             for (var l = 8; l >= 1; l--) {
-                for (var m = 1; m <= 8; m++) {
+                for (var m = 8; m >= 1; m--) {
                     var p = jsfx.getPieceInitals(chessBoard[l][m]);
                     if (p) {
                         strFen += p;
@@ -167,100 +211,62 @@
             // console.log(fen);
             // ----------------------------------------------------------------------------------------------------------------------------------
             // ----------------------------------------------------------------------------------------------------------------------------------
-            var vmlElement = document.getElementsByClassName('vertical-move-list')[0];
-            var movesList = vmlElement.children;
-            var nextMove = '';
+            var lastMoves = document.querySelector('cg-board').querySelectorAll('square');
+
+            var didWkMove = false;
+            var didBkMove = false;
+            var lastWkPos = '';
+            var lastBkPos = '';
+
+            var moves = document.querySelectorAll('u8t');
+            moves.forEach((m, key) => {
+                var pos = m.textContent;
+                if (pos == 'O-O' || pos == 'O-O-O') {
+                    if (key % 2 == 0) {
+                        didWkMove = true;
+                    } else {
+                        didBkMove = true;
+                    }
+                }
+                if (!didWkMove && (key % 2 == 0)) {
+                    if (pos.includes('K')) {
+                        didWkMove = true;
+                    }
+                }
+                if (!didBkMove && (key % 2 == 1)) {
+                    if (pos.includes('K')) {
+                        didBkMove = true;
+                    }
+                }
+            });
+
             var castle = 'KQkq'
-            var isWhiteCastle = true;
-            var isBlackCastle = true;
-            var movesPlayed = movesList.length;
 
-            for (let i = 0; i < movesList.length; i++) {
-
-                let whiteMove = movesList[i].querySelector('.white');
-                let blackMove = movesList[i].querySelector('.black');
-
-                if (whiteMove) {
-                    let move;
-                    let piece = false;
-
-                    if (whiteMove.children[0]) {
-                        move = whiteMove.children[0].attributes[0].value;
-                        piece = move.includes('rook') || move.includes('king')
-                    }
-
-                    if (whiteMove.innerText == 'O-O') {
-                        if (isBlackCastle) {
-                            castle = 'kq'
-                            isWhiteCastle = false;
-                        } else {
-                            castle = '-'
-                        }
-                    } else if (whiteMove.innerText == 'O-O-O') {
-                        if (isBlackCastle) {
-                            castle = 'kq'
-                            isWhiteCastle = false;
-                        } else {
-                            castle = '-'
-                        }
-                    } else if (piece) {
-                        if (isBlackCastle) {
-                            castle = 'kq'
-                            isWhiteCastle = false;
-                        } else {
-                            castle = '-'
-                        }
-                    }
-                }
-
-                if (blackMove) {
-
-                    let move;
-                    let piece = false;
-
-                    if (blackMove.children[0]) {
-                        move = blackMove.children[0].attributes[0].value;
-                        piece = move.includes('rook') || move.includes('king')
-                    }
-
-                    if (blackMove.innerText == 'O-O') {
-                        if (isWhiteCastle) {
-                            castle = 'KQ'
-                            isBlackCastle = false;
-                        } else {
-                            castle = '-'
-                        }
-                    } else if (blackMove.innerText == 'O-O-O') {
-                        if (isWhiteCastle) {
-                            castle = 'KQ'
-                            isBlackCastle = false;
-                        } else {
-                            castle = '-'
-                        }
-                    } else if (piece) {
-                        if (isWhiteCastle) {
-                            castle = 'KQ'
-                            isBlackCastle = false;
-                        } else {
-                            castle = '-'
-                        }
-                    }
-                }
-
-                if (i <= movesList.length) {
-
-                    if (whiteMove) {
-                        nextMove = 'b'
-                    }
-
-                    if (blackMove) {
-                        nextMove = 'w'
-                    }
-                }
-
+            if (!didWkMove && !didBkMove) {
+                castle = 'KQkq';
+            } else if (didWkMove && !didBkMove) {
+                castle = 'kq';
+            } else if (!didWkMove && didBkMove) {
+                castle = 'KQ';
+            } else if (didWkMove && didBkMove) {
+                castle = '-';
             }
+            // ------------------------------------------------------------------------------------------------------------------------------------------------
+            var nextMove = '';
+            var movesLength = moves.length;
+            if (movesLength % 2 == 0) {
+                nextMove = 'w';
+            } else {
+                nextMove = 'b';
+            }
+            // ------------------------------------------------------------------------------------------------------------------------------------------------
+            var movesIndex = document.querySelectorAll('i5z');
+            var movesPlayed = movesIndex.length;
+
+            // ------------------------------------------------------------------------
 
             var cmdFen = `position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves \n`;
+            // "r1bqkb1r/pp2pppp/2n5/3N4/8/4Q3/PPP2PPP/R1B1KBNR b KQkq - 0 7",
             // p.stdin.write(`position fen ${fen} ${nextMove} ${castle} - 0 ${movesPlayed} moves \n`)
             // p.stdin.write("go depth 21 \n")
             // console.log(cmdFen);
