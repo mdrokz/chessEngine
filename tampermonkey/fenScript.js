@@ -184,75 +184,46 @@
                     let move;
                     let piece = false;
 
-                    if (whiteMove.children[0]) {
-                        move = whiteMove.children[0].attributes[0].value;
-                        piece = move.includes('rook') || move.includes('king')
-                    }
+                    // if (whiteMove.children[0]) {
+                    //     move = whiteMove.children[0].attributes[0].value;
+                    //     piece = move.includes('rook') || move.includes('king')
+                    // }
 
-                    if (whiteMove.innerText == 'O-O') {
-                        if (isBlackCastle) {
-                            castle = 'kq'
-                            isWhiteCastle = false;
-                        } else {
-                            castle = '-'
-                        }
-                    } else if (whiteMove.innerText == 'O-O-O') {
-                        if (isBlackCastle) {
-                            castle = 'kq'
-                            isWhiteCastle = false;
-                        } else {
-                            castle = '-'
-                        }
-                    } else if (piece) {
-                        if (isBlackCastle) {
-                            castle = 'kq'
-                            isWhiteCastle = false;
-                        } else {
-                            castle = '-'
-                        }
+                    if (whiteMove.innerText == 'O-O' || whiteMove.innerText == 'O-O-O' || whiteMove.innerText.includes('K')) {
+                        isBlackCastle = false;
+
                     }
                 }
 
                 if (blackMove) {
-
                     let move;
                     let piece = false;
 
-                    if (blackMove.children[0]) {
-                        move = blackMove.children[0].attributes[0].value;
-                        piece = move.includes('rook') || move.includes('king')
-                    }
+                    // if (blackMove.children[0]) {
+                    //     move = blackMove.children[0].attributes[0].value;
+                    //     piece = move.includes('rook') || move.includes('king')
+                    // }
 
-                    if (blackMove.innerText == 'O-O') {
-                        if (isWhiteCastle) {
-                            castle = 'KQ'
-                            isBlackCastle = false;
-                        } else {
-                            castle = '-'
-                        }
-                    } else if (blackMove.innerText == 'O-O-O') {
-                        if (isWhiteCastle) {
-                            castle = 'KQ'
-                            isBlackCastle = false;
-                        } else {
-                            castle = '-'
-                        }
-                    } else if (piece) {
-                        if (isWhiteCastle) {
-                            castle = 'KQ'
-                            isBlackCastle = false;
-                        } else {
-                            castle = '-'
-                        }
+                    if (blackMove.innerText == 'O-O' || blackMove.innerText == 'O-O-O' || blackMove.innerText.includes('K')) {
+                        isWhiteCastle = false;
                     }
                 }
 
-                if (i <= movesList.length) {
+                if (!isWhiteCastle && !isBlackCastle) {
+                    castle = '-'
+                } else {
+                    if (isWhiteCastle) {
+                        castle = 'KQ';
+                    } else if (isBlackCastle) {
+                        castle = 'kq';
+                    }
+                }
 
+
+                if (i <= movesList.length) {
                     if (whiteMove) {
                         nextMove = 'b'
                     }
-
                     if (blackMove) {
                         nextMove = 'w'
                     }
